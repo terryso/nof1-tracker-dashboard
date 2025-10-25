@@ -369,7 +369,7 @@ class UIManager {
     // 更新UI
     updateUI(data) {
         this.updateAccountOverview(data.account);
-        this.updatePositionsTable(data.positions);
+        this.updatePositionsTable(data.positions, data.account);
         this.updateTradesTable(data.trades);
         this.updateLastUpdateTime();
     }
@@ -405,9 +405,8 @@ class UIManager {
     }
 
     // 更新仓位表格
-    updatePositionsTable(positions) {
+    updatePositionsTable(positions, accountInfo) {
         // 获取账户信息用于保证金计算
-        const accountInfo = this.data.account;
         const totalMargin = accountInfo ? (accountInfo.totalPositionInitialMargin || accountInfo.totalInitialMargin || 0) : 0;
         const tbody = document.getElementById('positionsTableBody');
         if (!tbody) return;
