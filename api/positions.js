@@ -63,6 +63,11 @@ module.exports = async (req, res) => {
             parseFloat(position.positionAmt) !== 0
         );
 
+        // 调试日志：查看第一个持仓的数据结构
+        if (activePositions.length > 0) {
+            console.log('持仓数据示例:', JSON.stringify(activePositions[0], null, 2));
+        }
+
         res.json(activePositions);
 
     } catch (error) {

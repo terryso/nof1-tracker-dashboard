@@ -71,6 +71,16 @@ module.exports = async (req, res) => {
         }
 
         const data = await response.json();
+        
+        // 调试日志：查看账户数据
+        console.log('账户数据:', JSON.stringify({
+            totalWalletBalance: data.totalWalletBalance,
+            totalUnrealizedProfit: data.totalUnrealizedProfit,
+            availableBalance: data.availableBalance,
+            totalMarginBalance: data.totalMarginBalance,
+            totalPositionInitialMargin: data.totalPositionInitialMargin
+        }, null, 2));
+        
         res.json(data);
 
     } catch (error) {

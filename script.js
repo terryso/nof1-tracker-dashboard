@@ -167,6 +167,16 @@ class DataManager {
             ? (totalUnrealizedPnl / (totalWalletBalance - totalUnrealizedPnl)) * 100
             : 0;
 
+        // 调试日志
+        console.log('盈亏计算:', {
+            totalWalletBalance: totalWalletBalance.toFixed(2),
+            baseAssetValue: this.getBaseAssetValue(),
+            totalProfit: totalProfit.toFixed(2),
+            totalProfitRate: totalProfitRate.toFixed(2) + '%',
+            totalUnrealizedPnl: totalUnrealizedPnl.toFixed(2),
+            unrealizedPnlRate: unrealizedPnlRate.toFixed(2) + '%'
+        });
+
         // 添加到账户数据中
         this.data.account.totalProfit = totalProfit;
         this.data.account.totalProfitRate = totalProfitRate;
@@ -183,6 +193,7 @@ class DataManager {
         const baseDate = this.getBaseDate();
         let maxProfit = 0;
         let maxLoss = 0;
+        let totalRealizedPnl = 0;
 
         // 分析每笔交易的已实现盈亏
         this.data.trades.forEach(trade => {
@@ -190,31 +201,18 @@ class DataManager {
 
             // 只分析基准日期之后的交易
             if (tradeDate >= baseDate) {
-                // 计算交易的已实现盈亏
-                // 注意：这里需要根据实际的配对交易来计算
-                // 简化处理，假设BUY和SELL成对出现
-                const commission = parseFloat(trade.commission);
-                const quantity = parseFloat(trade.qty);
-                const price = parseFloat(trade.price);
-                const notionalValue = quantity * price;
-
-                // 基于手续费和交易方向估算盈亏
-                // 这只是一个简化算法，实际应该追踪完整的开仓/平仓对
-                let estimatedPnl = 0;
-
-                if (trade.side === 'SELL') {
-                    // 平仓操作，估算盈利
-                    estimatedPnl = notionalValue * 0.001 - commission; // 假设0.1%的收益率
-                } else {
-                    // 开仓操作，手续费作为成本
-                    estimatedPnl = -commission;
+                // 使用币安API返回的实际已实现盈亏
+                const realizedPnl = trade.realizedPnl ? parseFloat(trade.realizedPnl) : 0;
+                
+                // 累计总已实现盈亏
+                totalRealizedPnl += realizedPnl;
+                
+                // 更新最大盈利和最大损失
+                if (realizedPnl > maxProfit) {
+                    maxProfit = realizedPnl;
                 }
-
-                if (estimatedPnl > maxProfit) {
-                    maxProfit = estimatedPnl;
-                }
-                if (estimatedPnl < maxLoss) {
-                    maxLoss = estimatedPnl;
+                if (realizedPnl < maxLoss) {
+                    maxLoss = realizedPnl;
                 }
             }
         });
@@ -222,6 +220,7 @@ class DataManager {
         // 添加到账户数据中
         this.data.account.maxProfit = maxProfit;
         this.data.account.maxLoss = maxLoss;
+        this.data.account.totalRealizedPnl = totalRealizedPnl;
     }
 
     // 获取当前数据
@@ -442,7 +441,18 @@ class UIManager {
             const unrealizedPnl = parseFloat(position.unRealizedProfit);
             const pnlRate = ((markPrice - entryPrice) / entryPrice * posAmt > 0 ? 1 : -1) *
                            (Math.abs(unrealizedPnl) / (Math.abs(posAmt) * entryPrice)) * 100;
-            const margin = parseFloat(position.isolatedMargin);
+            
+            // 计算保证金：对于全仓模式，使用 notional / leverage；对于逐仓模式，使用 isolatedMargin
+            let margin;
+            if (position.marginType === 'cross') {
+                // 全仓模式：保证金 = 名义价值 / 杠杆倍数
+                const notional = Math.abs(parseFloat(position.notional));
+                const leverage = parseFloat(position.leverage);
+                margin = notional / leverage;
+            } else {
+                // 逐仓模式：直接使用 isolatedMargin
+                margin = parseFloat(position.isolatedMargin);
+            }
 
             return `
                 <tr>
@@ -450,24 +460,22 @@ class UIManager {
                     <td><span class="direction-tag ${posAmt > 0 ? 'direction-long' : 'direction-short'}">${posAmt > 0 ? 'LONG' : 'SHORT'}</span></td>
                     <td>${entryPrice.toFixed(4)}</td>
                     <td>${markPrice.toFixed(4)}</td>
-                    <td>formatPositionAmount(posAmt)</td>
+                    <td>${formatPositionAmount(posAmt)}</td>
                     <td class="${unrealizedPnl >= 0 ? 'pnl-positive' : 'pnl-negative'}">${unrealizedPnl.toFixed(2)}</td>
                     <td class="${pnlRate >= 0 ? 'pnl-positive' : 'pnl-negative'}">${pnlRate.toFixed(2)}%</td>
-                    <td>${(totalMargin / activePositions.length).toFixed(2)}</td>
+                    <td>${margin.toFixed(2)}</td>
                 </tr>
             `;
         }).join('');
 
-        // 添加持仓统计信息
-        const statsRow = `
-            <tr class="stats-row">
-                <td colspan="8">
-                    <strong>持仓总数: ${activePositions.length} | 总保证金占用: ${totalMargin.toFixed(2)} USDT</strong>
-                </td>
-            </tr>
-        `;
+        tbody.innerHTML = rows;
         
-        tbody.innerHTML = statsRow + rows;    }
+        // 更新持仓数量显示
+        const positionCountElement = document.getElementById('positionCount');
+        if (positionCountElement) {
+            positionCountElement.textContent = activePositions.length;
+        }
+    }
 
     // 更新交易表格
     updateTradesTable(trades) {
@@ -501,21 +509,13 @@ class UIManager {
                     <td>${parseFloat(trade.qty).toFixed(3)}</td>
                     <td>${(parseFloat(trade.qty) * parseFloat(trade.price)).toFixed(2)}</td>
                     <td>${parseFloat(trade.commission).toFixed(4)} ${trade.commissionAsset}</td>
-                    <td>-</td>
+                    <td>${trade.realizedPnl ? parseFloat(trade.realizedPnl).toFixed(2) : '-'}</td>
                 </tr>
             `;
         }).join('');
 
-        // 添加持仓统计信息
-        const statsRow = `
-            <tr class="stats-row">
-                <td colspan="8">
-                    <strong>持仓总数: ${activePositions.length} | 总保证金占用: ${totalMargin.toFixed(2)} USDT</strong>
-                </td>
-            </tr>
-        `;
-        
-        tbody.innerHTML = statsRow + rows;    }
+        tbody.innerHTML = rows;
+    }
 
     // 更新最后更新时间
     updateLastUpdateTime() {
