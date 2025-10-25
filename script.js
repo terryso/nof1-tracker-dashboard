@@ -423,7 +423,6 @@ class UIManager {
         }
         
         const rows = activePositions.map(position => {
-        const rows = positions.map(position => {
             const posAmt = parseFloat(position.positionAmt);
             const entryPrice = parseFloat(position.entryPrice);
             const markPrice = parseFloat(position.markPrice);
