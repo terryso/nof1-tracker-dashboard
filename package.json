@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vercel dev",
     "build": "echo 'Build complete - static files ready'",
-    "start": "vercel dev",
+    "start": "node server.js",
     "deploy": "vercel --prod"
   },
   "keywords": [
@@ -21,7 +21,9 @@
   "author": "Nof1 Trading Team",
   "license": "MIT",
   "dependencies": {
-    "crypto": "^1.0.1"
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "express": "^4.21.2"
   },
   "devDependencies": {
     "vercel": "^32.0.0"
