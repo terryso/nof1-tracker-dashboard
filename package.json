@@ -1,0 +1,32 @@
+{
+  "name": "nof1-tracker-dashboard",
+  "version": "1.0.0",
+  "description": "Nof1交易数据监控面板 - 安全的币安合约数据展示",
+  "main": "binance-tracker.html",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'Build complete - static files ready'",
+    "start": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "keywords": [
+    "binance",
+    "futures",
+    "trading",
+    "dashboard",
+    "cryptocurrency",
+    "tracker",
+    "nof1"
+  ],
+  "author": "Nof1 Trading Team",
+  "license": "MIT",
+  "dependencies": {
+    "crypto": "^1.0.1"
+  },
+  "devDependencies": {
+    "vercel": "^32.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepSeek Chat V3.1 - 交易数据监控面板</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+
+        <!-- 顶部标题区域 -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fab fa-bitcoin"></i>
+                    <span>DeepSeek Chat V3.1</span>
+                </div>
+                <div class="header-controls">
+                    <div class="refresh-info">
+                        <span id="countdown">下次刷新: 60秒</span>
+                        <button id="refreshBtn" onclick="manualRefresh()" class="refresh-btn">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    <div class="status-indicator">
+                        <span class="status-dot" id="statusDot"></span>
+                        <span id="statusText">未连接</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- 账户总资产统计区域 -->
+        <section class="account-overview">
+            <div class="overview-header">
+                <h2>账户总资产</h2>
+                <div class="last-update" id="lastUpdate">--</div>
+            </div>
+            <div class="overview-grid">
+                <div class="overview-item">
+                    <div class="overview-label">总资产折合</div>
+                    <div class="overview-value" id="totalAssets">0.00</div>
+                    <div class="overview-currency">USDT</div>
+                </div>
+                <div class="overview-item">
+                    <div class="overview-label">总盈利</div>
+                    <div class="overview-value profit-value" id="totalProfit">0.00</div>
+                    <div class="overview-currency">USDT</div>
+                    <div class="overview-desc">自2025-10-25以来</div>
+                </div>
+                <div class="overview-item">
+                    <div class="overview-label">总盈利率</div>
+                    <div class="overview-value profit-rate-value" id="totalProfitRate">0.00%</div>
+                    <div class="overview-currency"></div>
+                    <div class="overview-desc">自2025-10-25以来</div>
+                </div>
+                <div class="overview-item">
+                    <div class="overview-label">未实现盈亏</div>
+                    <div class="overview-value pnl-value" id="totalUnrealizedPnl">0.00</div>
+                    <div class="overview-currency">USDT</div>
+                </div>
+                <div class="overview-item">
+                    <div class="overview-label">未实现盈亏率</div>
+                    <div class="overview-value pnl-rate-value" id="unrealizedPnlRate">0.00%</div>
+                    <div class="overview-currency"></div>
+                </div>
+                <div class="overview-item">
+                    <div class="overview-label">最大盈利 / 最大损失</div>
+                    <div class="overview-extreme-numbers">
+                        <div class="extreme-number profit-value" id="maxProfit">0.00</div>
+                        <div class="extreme-number loss-value" id="maxLoss">0.00</div>
+                    </div>
+                    <div class="overview-extreme-info">
+                        <span class="overview-currency">USDT</span>
+                        <span class="overview-desc">自2025-10-25以来</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 主要内容区域 -->
+        <main class="main-content">
+            <!-- 当前仓位 -->
+            <section class="positions-section">
+                <div class="section-header">
+                    <h2>当前仓位</h2>
+                    <div class="position-summary">
+                        <span>持仓数量: <strong id="positionCount">0</strong></span>
+                    </div>
+                </div>
+
+                <div class="positions-table-container">
+                    <table class="positions-table">
+                        <thead>
+                            <tr>
+                                <th>币种</th>
+                                <th>方向</th>
+                                <th>开仓价格</th>
+                                <th>标记价格</th>
+                                <th>持仓量</th>
+                                <th>未实现盈亏</th>
+                                <th>收益率</th>
+                                <th>保证金</th>
+                            </tr>
+                        </thead>
+                        <tbody id="positionsTableBody">
+                            <tr class="no-data-row">
+                                <td colspan="8">暂无持仓数据</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 最近交易记录 -->
+            <section class="trades-section">
+                <div class="section-header">
+                    <h2>最近交易记录</h2>
+                    <div class="trades-summary">
+                        <span>最近 <strong>25</strong> 笔交易</span>
+                    </div>
+                </div>
+
+                <div class="trades-table-container">
+                    <table class="trades-table">
+                        <thead>
+                            <tr>
+                                <th>时间</th>
+                                <th>币种</th>
+                                <th>方向</th>
+                                <th>成交价格</th>
+                                <th>成交数量</th>
+                                <th>成交额</th>
+                                <th>手续费</th>
+                                <th>已实现盈亏</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tradesTableBody">
+                            <tr class="no-data-row">
+                                <td colspan="8">暂无交易数据</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
