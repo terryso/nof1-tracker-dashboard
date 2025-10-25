@@ -429,7 +429,7 @@ class UIManager {
             const unrealizedPnl = parseFloat(position.unRealizedProfit);
             const pnlRate = ((markPrice - entryPrice) / entryPrice * posAmt > 0 ? 1 : -1) *
                            (Math.abs(unrealizedPnl) / (Math.abs(posAmt) * entryPrice)) * 100;
-            const margin = parseFloat(position.initialMargin);
+            const margin = parseFloat(position.isolatedMargin);
 
             return `
                 <tr>

@@ -1,6 +1,19 @@
+const { HttpsProxyAgent } = require('https-proxy-agent');
+
 const crypto = require('crypto');
 
 // 币安API配置
+// 创建代理agent（如果配置了代理）
+function createProxyAgent() {
+    const proxyHost = process.env.PROXY_HOST;
+    const proxyPort = process.env.PROXY_PORT;
+    const proxyProtocol = process.env.PROXY_PROTOCOL || 'http';
+
+    if (proxyHost && proxyPort) {
+        return new HttpsProxyAgent(`${proxyProtocol}://${proxyHost}:${proxyPort}`);
+    }
+    return null;
+}
 const BINANCE_API_BASEURL = 'https://api.binance.com';
 const BINANCE_FUTURES_URL = 'https://fapi.binance.com';
 const BINANCE_TESTNET_FUTURES_URL = 'https://testnet.binancefuture.com';
