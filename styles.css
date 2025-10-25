@@ -523,14 +523,16 @@ body {
 /* 表格容器 */
 .positions-table-container, .trades-table-container {
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* iOS 平滑滚动 */
 }
 
 /* 表格样式 */
 .positions-table, .trades-table {
     width: 100%;
+    min-width: 800px; /* 设置最小宽度，防止列过度挤压 */
     border-collapse: collapse;
     font-size: 14px;
-    table-layout: fixed;
+    table-layout: auto; /* 改为 auto，让内容自适应 */
 }
 
 .positions-table th, .trades-table th {
@@ -566,24 +568,24 @@ body {
     background: var(--background-color);
 }
 
-/* 设置各列宽度 */
-.positions-table th:nth-child(1), .positions-table td:nth-child(1) { width: 12%; } /* 币种 */
-.positions-table th:nth-child(2), .positions-table td:nth-child(2) { width: 10%; } /* 方向 */
-.positions-table th:nth-child(3), .positions-table td:nth-child(3) { width: 12%; } /* 开仓价格 */
-.positions-table th:nth-child(4), .positions-table td:nth-child(4) { width: 12%; } /* 标记价格 */
-.positions-table th:nth-child(5), .positions-table td:nth-child(5) { width: 12%; } /* 持仓量 */
-.positions-table th:nth-child(6), .positions-table td:nth-child(6) { width: 14%; } /* 未实现盈亏 */
-.positions-table th:nth-child(7), .positions-table td:nth-child(7) { width: 14%; } /* 收益率 */
-.positions-table th:nth-child(8), .positions-table td:nth-child(8) { width: 14%; } /* 保证金 */
+/* 设置最小列宽，保证内容不会过度挤压 */
+.positions-table th:nth-child(1), .positions-table td:nth-child(1) { min-width: 80px; } /* 币种 */
+.positions-table th:nth-child(2), .positions-table td:nth-child(2) { min-width: 60px; } /* 方向 */
+.positions-table th:nth-child(3), .positions-table td:nth-child(3) { min-width: 90px; } /* 开仓价格 */
+.positions-table th:nth-child(4), .positions-table td:nth-child(4) { min-width: 90px; } /* 标记价格 */
+.positions-table th:nth-child(5), .positions-table td:nth-child(5) { min-width: 80px; } /* 持仓量 */
+.positions-table th:nth-child(6), .positions-table td:nth-child(6) { min-width: 90px; } /* 未实现盈亏 */
+.positions-table th:nth-child(7), .positions-table td:nth-child(7) { min-width: 80px; } /* 收益率 */
+.positions-table th:nth-child(8), .positions-table td:nth-child(8) { min-width: 80px; } /* 保证金 */
 
-.trades-table th:nth-child(1), .trades-table td:nth-child(1) { width: 16%; } /* 时间 */
-.trades-table th:nth-child(2), .trades-table td:nth-child(2) { width: 12%; } /* 币种 */
-.trades-table th:nth-child(3), .trades-table td:nth-child(3) { width: 10%; } /* 方向 */
-.trades-table th:nth-child(4), .trades-table td:nth-child(4) { width: 12%; } /* 成交价格 */
-.trades-table th:nth-child(5), .trades-table td:nth-child(5) { width: 12%; } /* 成交数量 */
-.trades-table th:nth-child(6), .trades-table td:nth-child(6) { width: 12%; } /* 成交额 */
-.trades-table th:nth-child(7), .trades-table td:nth-child(7) { width: 14%; } /* 手续费 */
-.trades-table th:nth-child(8), .trades-table td:nth-child(8) { width: 12%; } /* 已实现盈亏 */
+.trades-table th:nth-child(1), .trades-table td:nth-child(1) { min-width: 120px; } /* 时间 */
+.trades-table th:nth-child(2), .trades-table td:nth-child(2) { min-width: 70px; } /* 币种 */
+.trades-table th:nth-child(3), .trades-table td:nth-child(3) { min-width: 60px; } /* 方向 */
+.trades-table th:nth-child(4), .trades-table td:nth-child(4) { min-width: 90px; } /* 成交价格 */
+.trades-table th:nth-child(5), .trades-table td:nth-child(5) { min-width: 80px; } /* 成交数量 */
+.trades-table th:nth-child(6), .trades-table td:nth-child(6) { min-width: 90px; } /* 成交额 */
+.trades-table th:nth-child(7), .trades-table td:nth-child(7) { min-width: 80px; } /* 手续费 */
+.trades-table th:nth-child(8), .trades-table td:nth-child(8) { min-width: 80px; } /* 已实现盈亏 */
 
 /* 方向标签 */
 .direction-tag {
@@ -787,20 +789,47 @@ body {
         font-size: 20px;
     }
 
+    /* 在小屏幕上允许表格横向滚动，而不是强制压缩 */
+    .positions-table-container, .trades-table-container {
+        margin: 0 -12px; /* 抵消容器的padding，让滚动区域扩展到边缘 */
+        padding: 0 12px;
+    }
+
     .positions-table, .trades-table {
-        font-size: 11px;
+        font-size: 12px; /* 保持可读性 */
+        min-width: 700px; /* 减小最小宽度但仍然可读 */
     }
 
     .positions-table th, .trades-table th,
     .positions-table td, .trades-table td {
-        padding: 8px 6px;
-        font-size: 11px;
+        padding: 10px 8px;
+        font-size: 12px;
+        white-space: nowrap; /* 防止文本换行 */
     }
 
     .direction-tag {
-        font-size: 10px;
-        padding: 2px 6px;
+        font-size: 11px;
+        padding: 3px 6px;
     }
+
+    /* 减小最小宽度以适应小屏幕 */
+    .positions-table th:nth-child(1), .positions-table td:nth-child(1) { min-width: 70px; }
+    .positions-table th:nth-child(2), .positions-table td:nth-child(2) { min-width: 50px; }
+    .positions-table th:nth-child(3), .positions-table td:nth-child(3) { min-width: 80px; }
+    .positions-table th:nth-child(4), .positions-table td:nth-child(4) { min-width: 80px; }
+    .positions-table th:nth-child(5), .positions-table td:nth-child(5) { min-width: 70px; }
+    .positions-table th:nth-child(6), .positions-table td:nth-child(6) { min-width: 80px; }
+    .positions-table th:nth-child(7), .positions-table td:nth-child(7) { min-width: 70px; }
+    .positions-table th:nth-child(8), .positions-table td:nth-child(8) { min-width: 70px; }
+
+    .trades-table th:nth-child(1), .trades-table td:nth-child(1) { min-width: 100px; }
+    .trades-table th:nth-child(2), .trades-table td:nth-child(2) { min-width: 60px; }
+    .trades-table th:nth-child(3), .trades-table td:nth-child(3) { min-width: 50px; }
+    .trades-table th:nth-child(4), .trades-table td:nth-child(4) { min-width: 80px; }
+    .trades-table th:nth-child(5), .trades-table td:nth-child(5) { min-width: 70px; }
+    .trades-table th:nth-child(6), .trades-table td:nth-child(6) { min-width: 80px; }
+    .trades-table th:nth-child(7), .trades-table td:nth-child(7) { min-width: 70px; }
+    .trades-table th:nth-child(8), .trades-table td:nth-child(8) { min-width: 70px; }
 }
 
 /* 加载动画 */
