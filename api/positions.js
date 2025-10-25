@@ -37,8 +37,9 @@ module.exports = async (req, res) => {
 
     try {
         const baseUrl = useTestnet ? BINANCE_TESTNET_FUTURES_URL : BINANCE_FUTURES_URL;
-        const timestamp = Date.now();
-        const queryString = `timestamp=${timestamp}`;
+        const const timestamp = Date.now();
+        const recvWindow = 10000; // 10秒时间窗口
+        const queryString = `timestamp=${timestamp}&recvWindow=${recvWindow}`;
         const signature = generateSignature(queryString, secretKey);
 
         const response = await fetch(`${baseUrl}/fapi/v2/positionRisk?${queryString}&signature=${signature}`, {
