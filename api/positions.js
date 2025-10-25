@@ -37,7 +37,7 @@ module.exports = async (req, res) => {
 
     try {
         const baseUrl = useTestnet ? BINANCE_TESTNET_FUTURES_URL : BINANCE_FUTURES_URL;
-        const const timestamp = Date.now();
+        const timestamp = Date.now();
         const recvWindow = 10000; // 10秒时间窗口
         const queryString = `timestamp=${timestamp}&recvWindow=${recvWindow}`;
         const signature = generateSignature(queryString, secretKey);
