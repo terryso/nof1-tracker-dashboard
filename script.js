@@ -406,12 +406,28 @@ class UIManager {
             `;
             return;
         }
-
+        
+        // 过滤出有实际持仓的记录（positionAmt != 0）
+        const activePositions = positions.filter(position => {
+            const posAmt = parseFloat(position.positionAmt);
+            return posAmt !== 0;
+        });
+        
+        if (!activePositions || activePositions.length === 0) {
+            tbody.innerHTML = `
+                <tr class="no-data-row">
+                    <td colspan="8">暂无持仓数据</td>
+                </tr>
+            `;
+            return;
+        }
+        
+        const rows = activePositions.map(position => {
         const rows = positions.map(position => {
             const posAmt = parseFloat(position.positionAmt);
             const entryPrice = parseFloat(position.entryPrice);
             const markPrice = parseFloat(position.markPrice);
-            const unrealizedPnl = parseFloat(position.unrealizedPnl);
+            const unrealizedPnl = parseFloat(position.unRealizedProfit);
             const pnlRate = ((markPrice - entryPrice) / entryPrice * posAmt > 0 ? 1 : -1) *
                            (Math.abs(unrealizedPnl) / (Math.abs(posAmt) * entryPrice)) * 100;
             const margin = parseFloat(position.initialMargin);
