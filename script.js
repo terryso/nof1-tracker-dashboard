@@ -406,6 +406,9 @@ class UIManager {
 
     // 更新仓位表格
     updatePositionsTable(positions) {
+        // 获取账户信息用于保证金计算
+        const accountInfo = this.data.account;
+        const totalMargin = accountInfo ? (accountInfo.totalPositionInitialMargin || accountInfo.totalInitialMargin || 0) : 0;
         const tbody = document.getElementById('positionsTableBody');
         if (!tbody) return;
 
@@ -451,13 +454,21 @@ class UIManager {
                     <td>formatPositionAmount(posAmt)</td>
                     <td class="${unrealizedPnl >= 0 ? 'pnl-positive' : 'pnl-negative'}">${unrealizedPnl.toFixed(2)}</td>
                     <td class="${pnlRate >= 0 ? 'pnl-positive' : 'pnl-negative'}">${pnlRate.toFixed(2)}%</td>
-                    <td>${margin.toFixed(2) === '0.00' ? '全仓' : margin.toFixed(2)}</td>
+                    <td>${(totalMargin / activePositions.length).toFixed(2)}</td>
                 </tr>
             `;
         }).join('');
 
-        tbody.innerHTML = rows;
-    }
+        // 添加持仓统计信息
+        const statsRow = `
+            <tr class="stats-row">
+                <td colspan="8">
+                    <strong>持仓总数: ${activePositions.length} | 总保证金占用: ${totalMargin.toFixed(2)} USDT</strong>
+                </td>
+            </tr>
+        `;
+        
+        tbody.innerHTML = statsRow + rows;    }
 
     // 更新交易表格
     updateTradesTable(trades) {
@@ -496,8 +507,16 @@ class UIManager {
             `;
         }).join('');
 
-        tbody.innerHTML = rows;
-    }
+        // 添加持仓统计信息
+        const statsRow = `
+            <tr class="stats-row">
+                <td colspan="8">
+                    <strong>持仓总数: ${activePositions.length} | 总保证金占用: ${totalMargin.toFixed(2)} USDT</strong>
+                </td>
+            </tr>
+        `;
+        
+        tbody.innerHTML = statsRow + rows;    }
 
     // 更新最后更新时间
     updateLastUpdateTime() {
