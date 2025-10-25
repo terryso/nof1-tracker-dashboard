@@ -65,6 +65,17 @@ class BackendAPIClient {
 }
 
 // 数据管理器
+// 格式化持仓数量显示
+function formatPositionAmount(amount) {
+    const absAmount = Math.abs(amount);
+    if (absAmount >= 1000) {
+        return absAmount.toFixed(0);
+    } else if (absAmount >= 1) {
+        return absAmount.toFixed(2);
+    } else {
+        return absAmount.toFixed(4);
+    }
+}
 class DataManager {
     constructor() {
         this.apiClient = new BackendAPIClient();
@@ -437,10 +448,10 @@ class UIManager {
                     <td><span class="direction-tag ${posAmt > 0 ? 'direction-long' : 'direction-short'}">${posAmt > 0 ? 'LONG' : 'SHORT'}</span></td>
                     <td>${entryPrice.toFixed(4)}</td>
                     <td>${markPrice.toFixed(4)}</td>
-                    <td>${Math.abs(posAmt).toFixed(3)}</td>
+                    <td>formatPositionAmount(posAmt)</td>
                     <td class="${unrealizedPnl >= 0 ? 'pnl-positive' : 'pnl-negative'}">${unrealizedPnl.toFixed(2)}</td>
                     <td class="${pnlRate >= 0 ? 'pnl-positive' : 'pnl-negative'}">${pnlRate.toFixed(2)}%</td>
-                    <td>${margin.toFixed(2)}</td>
+                    <td>${margin.toFixed(2) === '0.00' ? '全仓' : margin.toFixed(2)}</td>
                 </tr>
             `;
         }).join('');
