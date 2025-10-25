@@ -4,10 +4,9 @@
   "description": "Nof1交易数据监控面板 - 安全的币安合约数据展示",
   "main": "binance-tracker.html",
   "scripts": {
-    "dev": "vercel dev",
-    "build": "echo 'Build complete - static files ready'",
     "start": "node server.js",
-    "deploy": "vercel --prod"
+    "dev": "node server.js",
+    "build": "echo 'Build complete - static files ready'"
   },
   "keywords": [
     "binance",
@@ -24,9 +23,6 @@
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "express": "^4.21.2"
-  },
-  "devDependencies": {
-    "vercel": "^32.0.0"
   },
   "engines": {
     "node": ">=18.0.0"
