@@ -49,6 +49,22 @@ class BackendAPIClient {
         }
     }
 
+    // 获取所有交易记录(用于计算最大盈利/损失)
+    async getAllTrades() {
+        try {
+            // 获取足够多的交易记录以覆盖从10月25日以来的所有交易
+            const response = await fetch(`/api/trades?limit=1000`);
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || '获取交易记录失败');
+            }
+            return await response.json();
+        } catch (error) {
+            console.error('获取所有交易记录失败:', error);
+            throw error;
+        }
+    }
+
     // 检查API配置
     async checkConfig() {
         try {
@@ -118,16 +134,18 @@ class DataManager {
             console.log('开始更新数据...');
 
             // 并行获取所有数据
-            const [accountData, positionsData, tradesData] = await Promise.all([
+            const [accountData, positionsData, tradesData, allTradesData] = await Promise.all([
                 this.apiClient.getAccountInfo(),
                 this.apiClient.getPositions(),
-                this.apiClient.getUserTrades(25)
+                this.apiClient.getUserTrades(25),
+                this.apiClient.getAllTrades() // 获取所有交易用于计算最大盈利/损失
             ]);
 
             // 更新数据
             this.data.account = accountData;
             this.data.positions = positionsData;
             this.data.trades = tradesData;
+            this.data.allTrades = allTradesData; // 保存所有交易记录
             this.lastUpdate = new Date();
 
             // 计算并添加盈亏分析
@@ -186,34 +204,39 @@ class DataManager {
         this.calculateMaxProfitLoss();
     }
 
-    // 计算最大盈利和最大损失
+    // 计算最大盈利和最大损失(单笔交易)
     calculateMaxProfitLoss() {
-        if (!this.data.trades || this.data.trades.length === 0) return;
+        // 使用所有交易记录进行计算
+        const tradesToAnalyze = this.data.allTrades || this.data.trades;
+        if (!tradesToAnalyze || tradesToAnalyze.length === 0) return;
 
         const baseDate = this.getBaseDate();
-        let maxProfit = 0;
-        let maxLoss = 0;
-        let totalRealizedPnl = 0;
+        let maxProfit = 0;  // 单笔最大盈利
+        let maxLoss = 0;    // 单笔最大损失
+        let totalRealizedPnl = 0; // 总已实现盈亏
 
-        // 分析每笔交易的已实现盈亏
-        this.data.trades.forEach(trade => {
+        // 筛选基准日期之后的交易
+        const filteredTrades = tradesToAnalyze.filter(trade => {
             const tradeDate = new Date(trade.time);
+            return tradeDate >= baseDate;
+        });
 
-            // 只分析基准日期之后的交易
-            if (tradeDate >= baseDate) {
-                // 使用币安API返回的实际已实现盈亏
-                const realizedPnl = trade.realizedPnl ? parseFloat(trade.realizedPnl) : 0;
-                
-                // 累计总已实现盈亏
-                totalRealizedPnl += realizedPnl;
-                
-                // 更新最大盈利和最大损失
-                if (realizedPnl > maxProfit) {
-                    maxProfit = realizedPnl;
-                }
-                if (realizedPnl < maxLoss) {
-                    maxLoss = realizedPnl;
-                }
+        // 遍历每笔交易,找出单笔最大盈利和最大损失
+        filteredTrades.forEach(trade => {
+            // 使用币安API返回的实际已实现盈亏
+            const realizedPnl = trade.realizedPnl ? parseFloat(trade.realizedPnl) : 0;
+            
+            // 累计总已实现盈亏
+            totalRealizedPnl += realizedPnl;
+            
+            // 更新单笔最大盈利(只看正值)
+            if (realizedPnl > 0 && realizedPnl > maxProfit) {
+                maxProfit = realizedPnl;
+            }
+            
+            // 更新单笔最大损失(只看负值)
+            if (realizedPnl < 0 && realizedPnl < maxLoss) {
+                maxLoss = realizedPnl;
             }
         });
 
@@ -221,6 +244,15 @@ class DataManager {
         this.data.account.maxProfit = maxProfit;
         this.data.account.maxLoss = maxLoss;
         this.data.account.totalRealizedPnl = totalRealizedPnl;
+        
+        // 调试日志
+        console.log('最大盈利/损失计算:', {
+            maxProfit: maxProfit.toFixed(2),
+            maxLoss: maxLoss.toFixed(2),
+            totalRealizedPnl: totalRealizedPnl.toFixed(2),
+            tradesCount: filteredTrades.length,
+            totalTradesAnalyzed: tradesToAnalyze.length
+        });
     }
 
     // 获取当前数据

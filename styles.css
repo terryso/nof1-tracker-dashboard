@@ -232,6 +232,33 @@ body {
     animation: spin 1s linear infinite;
 }
 
+.github-link {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.github-link:hover {
+    background: rgba(240, 185, 11, 0.15);
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(240, 185, 11, 0.3);
+}
+
+.github-link i {
+    font-size: 20px;
+}
+
 .config-btn {
     background: transparent;
     border: 1px solid var(--border-color);

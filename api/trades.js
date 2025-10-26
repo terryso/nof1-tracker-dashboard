@@ -39,10 +39,13 @@ module.exports = async (req, res) => {
         const { limit = 25 } = req.query;
         const baseUrl = useTestnet ? BINANCE_TESTNET_FUTURES_URL : BINANCE_FUTURES_URL;
 
-        // 直接获取所有交易记录，不限制币种
+        // 从币安获取更多记录以确保过滤后仍有足够数量
+        // 如果需要25条,获取100条;如果需要1000条,直接获取1000条
+        const requestLimit = parseInt(limit) <= 100 ? 100 : parseInt(limit);
+        
         const timestamp = Date.now();
         const params = new URLSearchParams({
-            limit: limit.toString(),
+            limit: requestLimit.toString(),
             timestamp: timestamp.toString()
         });
 
@@ -68,7 +71,7 @@ module.exports = async (req, res) => {
         // 过滤掉PUMPUSDT交易记录
         const filteredTrades = trades.filter(trade => trade.symbol !== 'PUMPUSDT');
 
-        // 按时间倒序排列（最新的在前面）
+        // 按时间倒序排列（最新的在前面），然后取指定数量
         const sortedTrades = filteredTrades
             .sort((a, b) => b.time - a.time)
             .slice(0, parseInt(limit));
