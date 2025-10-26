@@ -65,8 +65,11 @@ module.exports = async (req, res) => {
 
         const trades = await response.json();
 
+        // 过滤掉PUMPUSDT交易记录
+        const filteredTrades = trades.filter(trade => trade.symbol !== 'PUMPUSDT');
+
         // 按时间倒序排列（最新的在前面）
-        const sortedTrades = trades
+        const sortedTrades = filteredTrades
             .sort((a, b) => b.time - a.time)
             .slice(0, parseInt(limit));
 

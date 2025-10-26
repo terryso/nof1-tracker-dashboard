@@ -58,9 +58,9 @@ module.exports = async (req, res) => {
 
         const data = await response.json();
 
-        // 只返回有持仓的仓位（过滤掉positionAmt为0的）
+        // 只返回有持仓的仓位（过滤掉positionAmt为0的）并排除PUMPUSDT
         const activePositions = data.filter(position =>
-            parseFloat(position.positionAmt) !== 0
+            parseFloat(position.positionAmt) !== 0 && position.symbol !== 'PUMPUSDT'
         );
 
         // 调试日志：查看第一个持仓的数据结构
