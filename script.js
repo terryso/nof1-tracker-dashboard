@@ -471,8 +471,6 @@ class UIManager {
             const entryPrice = parseFloat(position.entryPrice);
             const markPrice = parseFloat(position.markPrice);
             const unrealizedPnl = parseFloat(position.unRealizedProfit);
-            const pnlRate = ((markPrice - entryPrice) / entryPrice * posAmt > 0 ? 1 : -1) *
-                           (Math.abs(unrealizedPnl) / (Math.abs(posAmt) * entryPrice)) * 100;
             
             // 计算保证金：对于全仓模式，使用 notional / leverage；对于逐仓模式，使用 isolatedMargin
             let margin;
@@ -485,6 +483,9 @@ class UIManager {
                 // 逐仓模式：直接使用 isolatedMargin
                 margin = parseFloat(position.isolatedMargin);
             }
+            
+            // 收益率 = 未实现盈亏 / 保证金 × 100%
+            const pnlRate = margin > 0 ? (unrealizedPnl / margin) * 100 : 0;
 
             return `
                 <tr>
