@@ -10,6 +10,10 @@ const TRADING_CONFIG = {
     baseDate: '2025-10-25T00:00:00+08:00',  // 基准日期（用于计算盈利和统计的开始时间）
     baseDateDisplay: '2025-10-25',           // 页面显示的日期格式
 
+    // 应用配置
+    appName: 'DeepSeek Chat V3.2',             // 跟踪代理名称
+    appTitle: '交易数据监控面板',               // 页面标题
+
     // 显示文本配置
     display: {
         dateTextPrefix: '自',

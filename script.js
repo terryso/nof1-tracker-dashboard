@@ -130,19 +130,27 @@ class DataManager {
 
                 console.log(`已加载初始资金配置: ${this.baseAssetValue} ${this.config.initialAssetValueCurrency || 'USDT'}`);
                 console.log(`已加载跟单日期配置: ${this.baseDateDisplay}`);
+
+                // 更新应用名称和标题
+                this.updateAppDisplay();
             } else {
                 // 使用默认值（如果配置文件未加载）
                 this.config = {
                     initialAssetValue: 140,
                     initialAssetValueCurrency: 'USDT',
                     baseDate: '2025-10-25T00:00:00+08:00',
-                    baseDateDisplay: '2025-10-25'
+                    baseDateDisplay: '2025-10-25',
+                    appName: 'DeepSeek Chat V3.1',
+                    appTitle: '交易数据监控面板'
                 };
                 this.baseAssetValue = this.config.initialAssetValue;
                 this.baseDate = new Date(this.config.baseDate);
                 this.baseDateDisplay = this.config.baseDateDisplay;
 
                 console.warn('配置文件未找到，使用默认配置');
+
+                // 更新应用名称和标题
+                this.updateAppDisplay();
             }
         } catch (error) {
             console.error('加载配置失败:', error.message);
@@ -150,6 +158,35 @@ class DataManager {
             this.baseAssetValue = 140;
             this.baseDate = new Date('2025-10-25T00:00:00+08:00');
             this.baseDateDisplay = '2025-10-25';
+            this.config = {
+                appName: 'DeepSeek Chat V3.1',
+                appTitle: '交易数据监控面板'
+            };
+
+            // 更新应用名称和标题
+            this.updateAppDisplay();
+        }
+    }
+
+    // 更新应用显示
+    updateAppDisplay() {
+        try {
+            // 更新页面标题
+            const titleElement = document.getElementById('pageTitle');
+            if (titleElement && this.config.appName && this.config.appTitle) {
+                titleElement.textContent = `${this.config.appName} - ${this.config.appTitle}`;
+            }
+
+            // 更新logo中的应用名称
+            const appNameElement = document.getElementById('appName');
+            if (appNameElement && this.config.appName) {
+                appNameElement.textContent = this.config.appName;
+            }
+
+            console.log(`已更新应用名称: ${this.config.appName}`);
+            console.log(`已更新页面标题: ${this.config.appTitle}`);
+        } catch (error) {
+            console.error('更新应用显示失败:', error.message);
         }
     }
 

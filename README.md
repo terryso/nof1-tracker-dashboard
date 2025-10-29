@@ -150,6 +150,10 @@ const TRADING_CONFIG = {
     baseDate: '2025-10-25T00:00:00+08:00',  // 基准日期（用于计算盈利和统计的开始时间）
     baseDateDisplay: '2025-10-25',           // 页面显示的日期格式
 
+    // 应用配置
+    appName: 'DeepSeek Chat V3.1',             // 跟踪代理名称
+    appTitle: '交易数据监控面板',               // 页面标题
+
     // 显示文本配置
     display: {
         dateTextPrefix: '自',
@@ -165,6 +169,8 @@ const TRADING_CONFIG = {
 | `initialAssetValue` | Number | 初始资金金额，用于计算总盈利 | 140 |
 | `baseDate` | String | 跟单开始时间，用于筛选交易记录 | '2025-10-25T00:00:00+08:00' |
 | `baseDateDisplay` | String | 页面显示的日期格式 | '2025-10-25' |
+| `appName` | String | 跟踪代理名称，显示在页面顶部 | 'DeepSeek Chat V3.1' |
+| `appTitle` | String | 页面标题，显示在浏览器标签页 | '交易数据监控面板' |
 
 **使用步骤：**
 
