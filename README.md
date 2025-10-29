@@ -7,6 +7,7 @@
 - 🔒 **安全架构**: API密钥仅存储在服务器端，前端无法访问
 - 📊 **实时数据**: 60秒自动刷新，显示最新的账户和交易数据
 - 💰 **盈亏分析**: 自定义基准日期，计算总盈利、盈利率等关键指标
+- ⚙️ **灵活配置**: 独立配置文件，轻松调整初始资金和跟单日期
 - 📱 **响应式设计**: 完美适配桌面和移动设备
 - ⚡ **高性能**: 使用Render云平台,稳定可靠
 - 🎯 **专注合约**: 只显示期货合约相关数据，过滤现货交易
@@ -133,17 +134,43 @@ npm start
 
 ## 自定义配置
 
-### 修改基准日期和金额
+### ⚙️ 交易配置
 
-在 `script.js` 中修改以下配置：
+项目使用独立的配置文件 `trading-config.js` 来管理交易参数。修改配置后需要重启服务器生效。
+
+**配置文件位置：** `trading-config.js`
 
 ```javascript
-// 基础资产价值 (USDT)
-this.baseAssetValue = 140;
+const TRADING_CONFIG = {
+    // 初始资金配置
+    initialAssetValue: 140,        // 初始钱包余额 (USDT)
+    initialAssetValueCurrency: 'USDT',
 
-// 基准日期
-this.baseDate = new Date('2025-10-25T00:00:00+08:00');
+    // 跟单日期配置
+    baseDate: '2025-10-25T00:00:00+08:00',  // 基准日期（用于计算盈利和统计的开始时间）
+    baseDateDisplay: '2025-10-25',           // 页面显示的日期格式
+
+    // 显示文本配置
+    display: {
+        dateTextPrefix: '自',
+        dateTextSuffix: '以来'
+    }
+};
 ```
+
+**配置说明：**
+
+| 参数 | 类型 | 说明 | 示例值 |
+|------|------|------|--------|
+| `initialAssetValue` | Number | 初始资金金额，用于计算总盈利 | 140 |
+| `baseDate` | String | 跟单开始时间，用于筛选交易记录 | '2025-10-25T00:00:00+08:00' |
+| `baseDateDisplay` | String | 页面显示的日期格式 | '2025-10-25' |
+
+**使用步骤：**
+
+1. 编辑 `trading-config.js` 文件
+2. 修改相应的配置值
+3. 重启服务器：`npm start`
 
 ### 修改刷新间隔
 
@@ -171,6 +198,16 @@ this.refreshInterval = 60;
    - 检查 Render 部署状态和日志
    - 验证服务是否正常运行
 
+4. **配置修改后未生效**
+   - 确认已修改 `trading-config.js` 文件
+   - 重启服务器：`npm start`
+   - 检查浏览器缓存，尝试强制刷新（Ctrl+F5）
+
+5. **盈利计算不正确**
+   - 检查 `initialAssetValue` 是否设置正确
+   - 确认 `baseDate` 设置为正确的跟单开始日期
+   - 验证币安交易记录是否包含指定日期后的数据
+
 ### 调试模式
 
 打开浏览器开发者工具查看控制台日志：
@@ -193,12 +230,16 @@ nof1-tracker-dashboard/
 ├── binance-tracker.html    # 主页面
 ├── styles.css              # 样式文件
 ├── script.js               # 前端JavaScript
+├── trading-config.js       # 交易配置文件 ⭐
 ├── server.js               # Express服务器
 ├── package.json            # 项目配置
 ├── .env.example            # 环境变量示例
 ├── .gitignore              # Git忽略文件
 └── README.md               # 项目文档
 ```
+
+**⭐ 新增文件：**
+- `trading-config.js` - 交易参数配置文件，用于设置初始资金和跟单日期
 
 ## 贡献指南
 

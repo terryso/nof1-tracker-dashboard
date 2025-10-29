@@ -78,7 +78,8 @@ class BackendAPIClient {
             throw error;
         }
     }
-}
+
+    }
 
 // 数据管理器
 // 格式化持仓数量显示
@@ -102,8 +103,9 @@ class DataManager {
         };
         this.lastUpdate = null;
         this.updateCallbacks = [];
-        this.baseAssetValue = 140; // 基础资产价值 (USDT)
-        this.baseDate = new Date('2025-10-25T00:00:00+08:00'); // 基准日期
+
+        // 从配置文件读取设置
+        this.loadConfig();
     }
 
     // 注册数据更新回调
@@ -116,16 +118,54 @@ class DataManager {
         this.updateCallbacks.forEach(callback => callback(type, data));
     }
 
+    // 加载配置
+    loadConfig() {
+        try {
+            // 从全局配置对象读取设置
+            if (typeof window !== 'undefined' && window.TRADING_CONFIG) {
+                this.config = window.TRADING_CONFIG;
+                this.baseAssetValue = this.config.initialAssetValue;
+                this.baseDate = new Date(this.config.baseDate);
+                this.baseDateDisplay = this.config.baseDateDisplay;
+
+                console.log(`已加载初始资金配置: ${this.baseAssetValue} ${this.config.initialAssetValueCurrency || 'USDT'}`);
+                console.log(`已加载跟单日期配置: ${this.baseDateDisplay}`);
+            } else {
+                // 使用默认值（如果配置文件未加载）
+                this.config = {
+                    initialAssetValue: 140,
+                    initialAssetValueCurrency: 'USDT',
+                    baseDate: '2025-10-25T00:00:00+08:00',
+                    baseDateDisplay: '2025-10-25'
+                };
+                this.baseAssetValue = this.config.initialAssetValue;
+                this.baseDate = new Date(this.config.baseDate);
+                this.baseDateDisplay = this.config.baseDateDisplay;
+
+                console.warn('配置文件未找到，使用默认配置');
+            }
+        } catch (error) {
+            console.error('加载配置失败:', error.message);
+            // 使用默认值
+            this.baseAssetValue = 140;
+            this.baseDate = new Date('2025-10-25T00:00:00+08:00');
+            this.baseDateDisplay = '2025-10-25';
+        }
+    }
+
     // 获取基础资产价值
     getBaseAssetValue() {
-        // 2025年10月25日的初始钱包余额：140 USDT
-        // 这是基于用户提供的真实历史数据
         return this.baseAssetValue;
     }
 
     // 获取基准日期
     getBaseDate() {
         return this.baseDate;
+    }
+
+    // 获取配置的日期显示文本
+    getBaseDateDisplay() {
+        return this.baseDateDisplay || '2025-10-25'; // 默认显示
     }
 
     // 更新所有数据
@@ -403,6 +443,7 @@ class UIManager {
         this.updatePositionsTable(data.positions, data.account);
         this.updateTradesTable(data.trades);
         this.updateLastUpdateTime();
+        this.updateDateDisplay();
     }
 
     // 更新账户概览
@@ -558,6 +599,20 @@ class UIManager {
         if (lastUpdateElement && lastUpdate) {
             lastUpdateElement.textContent = `最后更新: ${lastUpdate.toLocaleTimeString('zh-CN')}`;
         }
+    }
+
+    // 更新日期显示
+    updateDateDisplay() {
+        const baseDateDisplay = this.dataManager.getBaseDateDisplay();
+
+        // 更新所有日期显示元素
+        const dateElements = ['baseDateDisplay', 'baseDateDisplay2'];
+        dateElements.forEach(elementId => {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = baseDateDisplay;
+            }
+        });
     }
 
     // 更新元素内容

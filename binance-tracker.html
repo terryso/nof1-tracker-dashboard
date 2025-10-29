@@ -61,13 +61,13 @@
                     <div class="overview-label">总盈利</div>
                     <div class="overview-value profit-value" id="totalProfit">0.00</div>
                     <div class="overview-currency">USDT</div>
-                    <div class="overview-desc">自2025-10-25以来</div>
+                    <div class="overview-desc">自<span id="baseDateDisplay">2025-10-25</span>以来</div>
                 </div>
                 <div class="overview-item">
                     <div class="overview-label">总盈利率</div>
                     <div class="overview-value profit-rate-value" id="totalProfitRate">0.00%</div>
                     <div class="overview-currency"></div>
-                    <div class="overview-desc">自2025-10-25以来</div>
+                    <div class="overview-desc">自<span id="baseDateDisplay">2025-10-25</span>以来</div>
                 </div>
                 <div class="overview-item">
                     <div class="overview-label">未实现盈亏</div>
@@ -87,7 +87,7 @@
                     </div>
                     <div class="overview-extreme-info">
                         <span class="overview-currency">USDT</span>
-                        <span class="overview-desc">自2025-10-25以来</span>
+                        <span class="overview-desc">自<span id="baseDateDisplay2">2025-10-25</span>以来</span>
                     </div>
                 </div>
             </div>
@@ -162,6 +162,7 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="trading-config.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
