@@ -141,7 +141,9 @@ class DataManager {
                     baseDate: '2025-10-25T00:00:00+08:00',
                     baseDateDisplay: '2025-10-25',
                     appName: 'DeepSeek Chat V3.1',
-                    appTitle: '交易数据监控面板'
+                    appTitle: '交易数据监控面板',
+                    refreshInterval: 60,
+                    refreshButtonText: '下次刷新'
                 };
                 this.baseAssetValue = this.config.initialAssetValue;
                 this.baseDate = new Date(this.config.baseDate);
@@ -160,7 +162,9 @@ class DataManager {
             this.baseDateDisplay = '2025-10-25';
             this.config = {
                 appName: 'DeepSeek Chat V3.1',
-                appTitle: '交易数据监控面板'
+                appTitle: '交易数据监控面板',
+                refreshInterval: 60,
+                refreshButtonText: '下次刷新'
             };
 
             // 更新应用名称和标题
@@ -347,8 +351,11 @@ class DataManager {
 class UIManager {
     constructor(dataManager) {
         this.dataManager = dataManager;
-        this.refreshInterval = 60; // 60秒刷新间隔
-        this.countdown = 60;
+
+        // 从配置中读取刷新间隔，默认60秒
+        this.refreshInterval = this.dataManager.config?.refreshInterval || 60;
+        this.countdown = this.refreshInterval;
+
         this.autoRefreshTimer = null;
         this.countdownTimer = null;
         this.isLoading = false;
@@ -456,7 +463,8 @@ class UIManager {
     updateCountdownDisplay() {
         const countdownElement = document.getElementById('countdown');
         if (countdownElement) {
-            countdownElement.textContent = `下次刷新: ${this.countdown}秒`;
+            const refreshText = this.dataManager.config?.refreshButtonText || '下次刷新';
+            countdownElement.textContent = `${refreshText}: ${this.countdown}秒`;
         }
     }
 

@@ -14,6 +14,10 @@ const TRADING_CONFIG = {
     appName: 'DeepSeek Chat（访问人数太多，API让币安Block了）',             // 跟踪代理名称
     appTitle: '交易数据监控面板',               // 页面标题
 
+    // 刷新配置
+    refreshInterval: 600,                     // 自动刷新间隔（秒）
+    refreshButtonText: '下次刷新',             // 刷新倒计时显示文本
+
     // 显示文本配置
     display: {
         dateTextPrefix: '自',

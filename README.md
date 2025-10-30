@@ -154,6 +154,10 @@ const TRADING_CONFIG = {
     appName: 'DeepSeek Chat V3.1',             // 跟踪代理名称
     appTitle: '交易数据监控面板',               // 页面标题
 
+    // 刷新配置
+    refreshInterval: 60,                     // 自动刷新间隔（秒）
+    refreshButtonText: '下次刷新',             // 刷新倒计时显示文本
+
     // 显示文本配置
     display: {
         dateTextPrefix: '自',
@@ -171,6 +175,8 @@ const TRADING_CONFIG = {
 | `baseDateDisplay` | String | 页面显示的日期格式 | '2025-10-25' |
 | `appName` | String | 跟踪代理名称，显示在页面顶部 | 'DeepSeek Chat V3.1' |
 | `appTitle` | String | 页面标题，显示在浏览器标签页 | '交易数据监控面板' |
+| `refreshInterval` | Number | 自动刷新间隔时间（秒） | 60 |
+| `refreshButtonText` | String | 刷新倒计时显示的文本 | '下次刷新' |
 
 **使用步骤：**
 
@@ -178,14 +184,6 @@ const TRADING_CONFIG = {
 2. 修改相应的配置值
 3. 重启服务器：`npm start`
 
-### 修改刷新间隔
-
-在 `script.js` 中修改：
-
-```javascript
-// 刷新间隔 (秒)
-this.refreshInterval = 60;
-```
 
 ## 故障排除
 
