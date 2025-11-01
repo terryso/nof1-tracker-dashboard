@@ -5,6 +5,10 @@ const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 
+// ===== AUTH: Add this line after merge =====
+const { authMiddleware, loginHandler } = require('./auth-middleware');
+// ===== END AUTH =====
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -12,6 +16,14 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use(express.static('.'));
+
+// ===== AUTH: Add these lines after merge =====
+// Login endpoint
+app.post('/api/login', loginHandler);
+
+// Apply auth middleware to all routes except login
+app.use(authMiddleware);
+// ===== END AUTH =====
 
 // API路由
 app.use('/api', async (req, res, next) => {
