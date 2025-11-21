@@ -3,7 +3,7 @@
 
 const TRADING_CONFIG = {
     // 初始资金配置
-    initialAssetValue: 140,        // 初始钱包余额 (USDT)
+    initialAssetValue: 478,        // 初始钱包余额 (USDT)
     initialAssetValueCurrency: 'USDT',
 
     // 跟单日期配置
@@ -15,7 +15,7 @@ const TRADING_CONFIG = {
     appTitle: '交易数据监控面板',               // 页面标题
 
     // 刷新配置
-    refreshInterval: 600,                     // 自动刷新间隔（秒）
+    refreshInterval: 60,                     // 自动刷新间隔（秒）
     refreshButtonText: '下次刷新',             // 刷新倒计时显示文本
 
     // 显示文本配置
